@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Enablement Loan Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --cream: #FFF8E7;
+            --cream-dark: #F5E6C8;
+            --black: #0A0A0A;
+            --slate: #475569;
+            --slate-light: #64748B;
+            --slate-dark: #334155;
+            --accent-green: #10B981;
+            --accent-yellow: #F59E0B;
+            --accent-red: #EF4444;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+            color: var(--black);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--slate);
+            font-weight: 400;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 6px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.6s ease-out;
+            animation-fill-mode: both;
+            border: 1px solid rgba(71, 85, 105, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel:nth-child(1) { animation-delay: 0.1s; }
+        .panel:nth-child(2) { animation-delay: 0.2s; }
+        .panel:nth-child(3) { animation-delay: 0.3s; }
+        .panel:nth-child(4) { animation-delay: 0.4s; }
+        
+        .panel-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-icon {
+            font-size: 1.4rem;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--slate-dark);
+            font-size: 0.85rem;
+        }
+        
+        .control-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--black);
+            font-size: 0.95rem;
+        }
+        
+        .live-impact {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #78350F;
+            line-height: 1.4;
+            border-left: 3px solid var(--accent-yellow);
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: var(--cream-dark);
+            outline: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--black);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--black);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .metric-card {
+            background: var(--cream);
+            padding: 0.875rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--black);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--slate);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .metric-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+        
+        .metric-subtext {
+            font-size: 0.7rem;
+            color: var(--slate-light);
+            margin-top: 0.25rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-top: 1rem;
+        }
+        
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .persona-card {
+            background: var(--cream);
+            padding: 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        
+        .persona-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-color: var(--black);
+        }
+        
+        .persona-card.active {
+            background: var(--black);
+            color: white;
+            border-color: var(--black);
+        }
+        
+        .persona-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .persona-card.active .persona-name,
+        .persona-card.active .persona-details {
+            color: white;
+        }
+        
+        .persona-details {
+            font-size: 0.85rem;
+            color: var(--slate);
+        }
+        
+        .affordability-indicator {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .affordable {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 2px solid var(--accent-green);
+        }
+        
+        .moderate {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 2px solid var(--accent-yellow);
+        }
+        
+        .risky {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 2px solid var(--accent-red);
+        }
+        
+        .scenario-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .scenario-btn {
+            padding: 1rem;
+            background: var(--black);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .scenario-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scenario-btn:active {
+            transform: translateY(0);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .comparison-card {
+            background: var(--cream);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .comparison-title {
+            font-size: 0.85rem;
+            color: var(--slate);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .comparison-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+        
+        .help-text {
+            background: var(--slate-dark);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .impact-explanation {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            color: var(--slate-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            border-left: 4px solid var(--accent-yellow);
+            line-height: 1.5;
+        }
+        
+        .impact-explanation strong {
+            color: var(--black);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .target-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--cream-dark);
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            background: white;
+            color: var(--black);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--black);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+        }
+        
+        .result-label {
+            font-size: 0.75rem;
+            color: #065F46;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .result-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #065F46;
+        }
+        
+        .recommendation-box {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #4F46E5;
+        }
+        
+        .recommendation-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: #312E81;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: start;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #4C1D95;
+            line-height: 1.4;
+        }
+        
+        .recommendation-item::before {
+            content: "→";
+            margin-right: 0.5rem;
+            font-weight: 700;
+            color: #4F46E5;
+        }
+        
+        .scale-card {
+            background: white;
+            padding: 0.875rem;
+            border-radius: 8px;
+            border: 2px solid var(--cream-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .scale-card:hover {
+            border-color: var(--black);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .scale-card.active {
+            border-color: var(--black);
+            background: var(--cream);
+        }
+        
+        .scale-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 0.25rem;
+        }
+        
+        .scale-label {
+            font-size: 0.7rem;
+            color: var(--slate);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scale-metrics {
+            font-size: 0.75rem;
+            color: var(--slate-dark);
+            line-height: 1.4;
+        }
+        
+        .scale-metrics div {
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: var(--slate);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 0.75rem;
+            cursor: help;
+            margin-left: 0.5rem;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--slate-dark);
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .reset-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--black);
+            border: 2px solid var(--black);
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .reset-btn:hover {
+            background: var(--black);
+            color: white;
+        }
+        
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .persona-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .target-input-group {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (min-width: 1600px) {
+            body {
+                padding: 1.5rem 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐐 Asset Enablement Loan Simulator</h1>
+            <p class="subtitle">Interactive model to explore dairy goat financing scenarios and optimize lending strategies</p>
+        </header>
+        
+        <div class="dashboard">
+            <!-- Panel 1: Loan Parameters -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">⚙️</span>
+                    Loan Parameters
+                    <div class="tooltip">
+                        <span class="info-icon">?</span>
+                        <span class="tooltiptext">Adjust these parameters to see how different loan structures affect affordability and profitability. All changes update in real-time.</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Asset Price (Goat)</span>
+                        <span class="control-value">Kshs. <span id="assetPriceValue">40,000</span></span>
+                    </div>
+                    <input type="range" min="20000" max="80000" step="1000" value="40000" class="slider" id="assetPrice">
+                    <div class="live-impact" id="assetPriceImpact">Higher asset price = larger loans = more revenue per farmer but fewer farmers served with same float</div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Monthly Interest Rate (%)</span>
+                        <span class="control-value"><span id="interestRateValue">4.5</span>%</span>
+                    </div>
+                    <input type="range" min="1" max="10" step="0.5" value="4.5" class="slider" id="interestRate">
+                    <div class="live-impact" id="interestRateImpact">Rate directly impacts your revenue. +1% rate = ~+10% more profit BUT increases farmer burden and default risk</div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Loan Tenure (months)</span>
+                        <span class="control-value"><span id="tenureValue">12</span> months</span>
+                    </div>
+                    <input type="range" min="6" max="24" step="1" value="12" class="slider" id="tenure">
+                    <div class="live-impact" id="tenureImpact">Longer tenure = lower monthly payment (better farmer cashflow) BUT slower capital turnover (fewer cycles/year)</div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Farmer Deposit (%)</span>
+                        <span class="control-value"><span id="depositValue">10</span>%</span>
+                    </div>
+                    <input type="range" min="0" max="30" step="5" value="10" class="slider" id="deposit">
+                    <div class="live-impact" id="depositImpact">Higher deposit = less risk (skin in game) BUT excludes poorest farmers. 0% deposit reaches most but risk increases</div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Service Fee (Kshs.)</span>
+                        <span class="control-value">Kshs. <span id="serviceFeeValue">11,800</span></span>
+                    </div>
+                    <input type="range" min="5000" max="20000" step="500" value="11800" class="slider" id="serviceFee">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Deductible (%)</span>
+                        <span class="control-value"><span id="deductibleValue">4</span>%</span>
+                    </div>
+                    <input type="range" min="0" max="10" step="1" value="4" class="slider" id="deductible">
+                </div>
+                
+                <button class="reset-btn" onclick="resetDefaults()">Reset to Defaults</button>
+            </div>
+            
+            <!-- Panel 2: Loan Breakdown -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">💰</span>
+                    Loan Breakdown
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Gross Principal</div>
+                        <div class="metric-value" id="grossPrincipal">53,600</div>
+                        <div class="metric-subtext">Total initial financed</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Farmer Pays Upfront</div>
+                        <div class="metric-value" id="farmerDeposit">4,000</div>
+                        <div class="metric-subtext">Initial deposit</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Net Disbursed</div>
+                        <div class="metric-value" id="netDisbursed">47,616</div>
+                        <div class="metric-subtext">After deductible</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Interest</div>
+                        <div class="metric-value" id="totalInterest">25,713</div>
+                        <div class="metric-subtext">Over loan period</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="breakdownChart"></canvas>
+                </div>
+                
+                <div class="help-text">
+                    <strong>💡 How it works:</strong> The gross principal includes the asset price, service fee, and insurance. The farmer pays a deposit upfront, and a deductible is taken at disbursement. Interest is calculated using a flat rate method on the net financed balance.
+                </div>
+            </div>
+            
+            <!-- Panel 3: Monthly Payment & Total Cost -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📊</span>
+                    Payment Analysis
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card" style="grid-column: 1 / -1;">
+                        <div class="metric-label">Monthly Payment</div>
+                        <div class="metric-value" style="font-size: 2.5rem;" id="monthlyPayment">6,111</div>
+                        <div class="metric-subtext">Fixed amount for <span id="tenureDisplay">12</span> months</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Repayable</div>
+                        <div class="metric-value" id="totalRepayable">73,329</div>
+                        <div class="metric-subtext">All payments combined</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">True Cost to Farmer</div>
+                        <div class="metric-value" id="trueCost">79,313</div>
+                        <div class="metric-subtext">Including deposit & fees</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+                
+                <div class="help-text">
+                    <strong>💡 Understanding costs:</strong> The monthly payment is fixed throughout the loan period. True cost includes the upfront deposit, all monthly payments, and fees deducted at disbursement. This flat-rate model means you pay interest on the full amount for the entire duration.
+                </div>
+            </div>
+            
+            <!-- Panel 4: Farmer Viability -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">👤</span>
+                    Farmer Viability Simulator
+                </div>
+                
+                <div class="persona-grid">
+                    <div class="persona-card active" onclick="loadPersona('jane')">
+                        <div class="persona-name">👩‍🌾 Jane</div>
+                        <div class="persona-details">Small holder<br>Income: 15,000/mo<br>Expenses: 9,000/mo</div>
+                    </div>
+                    <div class="persona-card" onclick="loadPersona('john')">
+                        <div class="persona-name">👨‍🌾 John</div>
+                        <div class="persona-details">First-timer<br>Income: 20,000/mo<br>Expenses: 12,000/mo</div>
+                    </div>
+                    <div class="persona-card" onclick="loadPersona('mary')">
+                        <div class="persona-name">👩‍🌾 Mary</div>
+                        <div class="persona-details">Experienced<br>Income: 30,000/mo<br>Expenses: 18,000/mo</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Monthly Income</span>
+                        <span class="control-value">Kshs. <span id="incomeValue">15,000</span></span>
+                    </div>
+                    <input type="range" min="5000" max="50000" step="1000" value="15000" class="slider" id="monthlyIncome">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Monthly Expenses</span>
+                        <span class="control-value">Kshs. <span id="expensesValue">9,000</span></span>
+                    </div>
+                    <input type="range" min="3000" max="30000" step="1000" value="9000" class="slider" id="monthlyExpenses">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Expected Goat Income/Month</span>
+                        <span class="control-value">Kshs. <span id="goatIncomeValue">3,000</span></span>
+                    </div>
+                    <input type="range" min="1000" max="8000" step="500" value="3000" class="slider" id="goatIncome">
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Available Cash</div>
+                        <div class="metric-value" id="availableCash">6,000</div>
+                        <div class="metric-subtext">Before loan payment</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">After Loan Payment</div>
+                        <div class="metric-value" id="afterPayment">-111</div>
+                        <div class="metric-subtext">Net cashflow</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Debt-to-Income</div>
+                        <div class="metric-value" id="debtToIncome">34%</div>
+                        <div class="metric-subtext">Payment burden</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Default Risk</div>
+                        <div class="metric-value" id="defaultRisk">High</div>
+                        <div class="metric-subtext">Based on DTI ratio</div>
+                    </div>
+                </div>
+                
+                <div id="affordabilityIndicator" class="affordability-indicator risky">
+                    ⚠️ HIGH RISK: Negative cashflow after loan payment
+                </div>
+                
+                <div class="help-text">
+                    <strong>💡 Affordability Guide:</strong> Green (Safe) = DTI under 30% and positive cashflow. Yellow (Moderate) = DTI 30-40% or tight cashflow. Red (Risky) = DTI over 40% or negative cashflow. Adjust income or loan terms to improve viability.
+                </div>
+            </div>
+            
+            <!-- Panel 5: Target Float Simulation -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">🎯</span>
+                    Target Float Simulation: What Will You Get Back?
+                    <div class="tooltip">
+                        <span class="info-icon">?</span>
+                        <span class="tooltiptext">Enter your pilot investment amount and target return. The simulator will calculate your actual return and recommend optimal loan parameters to reach your goals.</span>
+                    </div>
+                </div>
+                
+                <div class="target-input-group">
+                    <div class="control-group" style="margin-bottom: 0;">
+                        <div class="control-label">
+                            <span>Pilot Float Investment (Kshs.)</span>
+                        </div>
+                        <input type="number" class="input-field" id="floatInvestment" placeholder="e.g., 5,000,000" value="5000000">
+                    </div>
+                    <div class="control-group" style="margin-bottom: 0;">
+                        <div class="control-label">
+                            <span>Target Annual Return (%)</span>
+                        </div>
+                        <input type="number" class="input-field" id="targetReturn" placeholder="e.g., 25" value="25">
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" onclick="calculateFloatReturn()">🚀 Calculate My Returns & Get Recommendations</button>
+                
+                <div id="floatResults" style="display: none;">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-label">Number of Loans</div>
+                            <div class="result-value" id="numLoans">93</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Total Revenue</div>
+                            <div class="result-value" id="totalRevenue">2.65M</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Actual Return (1yr)</div>
+                            <div class="result-value" id="actualReturn">33.2%</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Profit Amount</div>
+                            <div class="result-value" id="profitAmount">1.66M</div>
+                        </div>
+                    </div>
+                    
+                    <div id="impactExplanation" class="impact-explanation">
+                        <strong>📊 What's Happening Now:</strong>
+                        <span id="currentImpact"></span>
+                    </div>
+                    
+                    <div id="recommendations" class="recommendation-box">
+                        <div class="recommendation-title">💡 Smart Recommendations to Hit Your Target:</div>
+                        <div id="recommendationList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel 6: Scenario Testing -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">🎮</span>
+                    Scenario Testing: What-If Analysis
+                </div>
+                
+                <div class="scenario-buttons">
+                    <button class="scenario-btn" onclick="runScenario('drought')">
+                        🌵 Drought Year (-30% income)
+                    </button>
+                    <button class="scenario-btn" onclick="runScenario('bumper')">
+                        🌾 Bumper Harvest (+20% income)
+                    </button>
+                    <button class="scenario-btn" onclick="runScenario('sick')">
+                        🏥 Goat Gets Sick (-50% goat income)
+                    </button>
+                    <button class="scenario-btn" onclick="runScenario('prices')">
+                        📈 Milk Prices Rise (+40% goat income)
+                    </button>
+                </div>
+                
+                <div id="scenarioResult" class="help-text" style="margin-top: 1.5rem; display: none;">
+                    <strong>Scenario Result:</strong> <span id="scenarioText"></span>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comparison-title">Original Cashflow</div>
+                        <div class="comparison-value" id="originalCashflow">-111</div>
+                    </div>
+                    <div class="comparison-card">
+                        <div class="comparison-title">Scenario Cashflow</div>
+                        <div class="comparison-value" id="scenarioCashflow">-111</div>
+                    </div>
+                    <div class="comparison-card">
+                        <div class="comparison-title">Change</div>
+                        <div class="comparison-value" id="cashflowChange">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel 7: Portfolio Simulator -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <span class="panel-icon">📈</span>
+                    Portfolio Simulator: Business-Level Analysis
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Number of Farmers</span>
+                        <span class="control-value"><span id="numFarmersValue">100</span> farmers</span>
+                    </div>
+                    <input type="range" min="10" max="1000" step="10" value="100" class="slider" id="numFarmers">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Expected Default Rate (%)</span>
+                        <span class="control-value"><span id="defaultRateValue">10</span>%</span>
+                    </div>
+                    <input type="range" min="0" max="30" step="1" value="10" class="slider" id="defaultRate">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Cost of Capital (%/year)</span>
+                        <span class="control-value"><span id="capitalCostValue">12</span>%</span>
+                    </div>
+                    <input type="range" min="5" max="25" step="1" value="12" class="slider" id="capitalCost">
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Portfolio Value</div>
+                        <div class="metric-value" id="portfolioValue">5.36M</div>
+                        <div class="metric-subtext">Gross principal × farmers</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Expected Revenue</div>
+                        <div class="metric-value" id="expectedRevenue">2.85M</div>
+                        <div class="metric-subtext">Interest + fees collected</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Cost of Capital</div>
+                        <div class="metric-value" id="costOfCapital">536K</div>
+                        <div class="metric-subtext">Annual financing cost</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Expected Losses</div>
+                        <div class="metric-value" id="expectedLosses">536K</div>
+                        <div class="metric-subtext">From defaults</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Net Profit</div>
+                        <div class="metric-value" id="netProfit" style="font-size: 2rem;">1.78M</div>
+                        <div class="metric-subtext">After all costs</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">ROE (Return on Equity)</div>
+                        <div class="metric-value" id="roe">33.2%</div>
+                        <div class="metric-subtext">Profit / Portfolio</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+                
+                <div class="help-text">
+                    <strong>💡 Portfolio Insights:</strong> This shows the business-level impact of your loan parameters. Revenue comes from interest and fees. Costs include the cost of capital (what it costs to borrow money) and expected losses from defaults. Lower interest rates reduce revenue but may reduce defaults. Find the optimal balance for sustainable growth.
+                </div>
+                
+                <div class="recommendation-box" style="margin-top: 1rem;">
+                    <div class="recommendation-title">📊 Scale Comparison: What Happens at Different Volumes?</div>
+                    <div id="scaleComparison" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-top: 0.75rem;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global state
+        let state = {
+            assetPrice: 40000,
+            interestRate: 4.5,
+            tenure: 12,
+            deposit: 10,
+            serviceFee: 11800,
+            deductible: 4,
+            monthlyIncome: 15000,
+            monthlyExpenses: 9000,
+            goatIncome: 3000,
+            numFarmers: 100,
+            defaultRate: 10,
+            capitalCost: 12,
+            currentPersona: 'jane'
+        };
+        
+        // Personas data
+        const personas = {
+            jane: { income: 15000, expenses: 9000, goatIncome: 3000, name: 'Jane - Small holder' },
+            john: { income: 20000, expenses: 12000, goatIncome: 3500, name: 'John - First-timer' },
+            mary: { income: 30000, expenses: 18000, goatIncome: 4000, name: 'Mary - Experienced' }
+        };
+        
+        // Chart instances
+        let breakdownChart, paymentChart, portfolioChart;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            attachEventListeners();
+            updateAll();
+        });
+        
+        function initializeCharts() {
+            // Breakdown Chart (Pie)
+            const breakdownCtx = document.getElementById('breakdownChart').getContext('2d');
+            breakdownChart = new Chart(breakdownCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Asset Price', 'Service Fee', 'Insurance', 'Interest'],
+                    datasets: [{
+                        data: [40000, 11800, 1800, 25713],
+                        backgroundColor: ['#0A0A0A', '#475569', '#64748B', '#F5E6C8'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'DM Sans', size: 12 },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return label + ': Kshs. ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Payment Chart (Bar)
+            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+            paymentChart = new Chart(paymentCtx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 12}, (_, i) => `M${i+1}`),
+                    datasets: [{
+                        label: 'Monthly Payment',
+                        data: Array(12).fill(6111),
+                        backgroundColor: '#0A0A0A',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Kshs. ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Payment: Kshs. ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Portfolio Chart (Stacked Bar)
+            const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+            portfolioChart = new Chart(portfolioCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current Model', 'Lower Rate (-1%)', 'Higher Tenure (+6mo)', 'Lower Deposit (-5%)'],
+                    datasets: [
+                        {
+                            label: 'Net Profit',
+                            data: [1780000, 1420000, 1650000, 1850000],
+                            backgroundColor: '#10B981',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Losses',
+                            data: [536000, 480000, 510000, 590000],
+                            backgroundColor: '#EF4444',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Capital Cost',
+                            data: [536000, 536000, 670000, 590000],
+                            backgroundColor: '#F59E0B',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: {
+                            stacked: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Kshs. ' + (value / 1000000).toFixed(1) + 'M';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'DM Sans', size: 12 },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': Kshs. ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function attachEventListeners() {
+            // Loan parameters
+            document.getElementById('assetPrice').addEventListener('input', (e) => {
+                state.assetPrice = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('interestRate').addEventListener('input', (e) => {
+                state.interestRate = parseFloat(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('tenure').addEventListener('input', (e) => {
+                state.tenure = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('deposit').addEventListener('input', (e) => {
+                state.deposit = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('serviceFee').addEventListener('input', (e) => {
+                state.serviceFee = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('deductible').addEventListener('input', (e) => {
+                state.deductible = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            // Farmer viability
+            document.getElementById('monthlyIncome').addEventListener('input', (e) => {
+                state.monthlyIncome = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('monthlyExpenses').addEventListener('input', (e) => {
+                state.monthlyExpenses = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('goatIncome').addEventListener('input', (e) => {
+                state.goatIncome = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            // Portfolio
+            document.getElementById('numFarmers').addEventListener('input', (e) => {
+                state.numFarmers = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('defaultRate').addEventListener('input', (e) => {
+                state.defaultRate = parseInt(e.target.value);
+                updateAll();
+            });
+            
+            document.getElementById('capitalCost').addEventListener('input', (e) => {
+                state.capitalCost = parseInt(e.target.value);
+                updateAll();
+            });
+        }
+        
+        function calculateLoan() {
+            const insurance = state.assetPrice * 0.045;
+            const grossPrincipal = state.assetPrice + state.serviceFee + insurance;
+            const farmerDeposit = state.assetPrice * (state.deposit / 100);
+            const netFinancedBalance = grossPrincipal - farmerDeposit;
+            const deductibleAmount = netFinancedBalance * (state.deductible / 100);
+            const netDisbursed = netFinancedBalance - deductibleAmount;
+            
+            // Flat rate interest calculation
+            const monthlyInterest = netDisbursed * (state.interestRate / 100);
+            const totalInterest = monthlyInterest * state.tenure;
+            const totalRepayable = netDisbursed + totalInterest;
+            const monthlyPayment = totalRepayable / state.tenure;
+            const trueCost = farmerDeposit + totalRepayable + deductibleAmount;
+            
+            return {
+                insurance,
+                grossPrincipal,
+                farmerDeposit,
+                netFinancedBalance,
+                deductibleAmount,
+                netDisbursed,
+                monthlyInterest,
+                totalInterest,
+                totalRepayable,
+                monthlyPayment,
+                trueCost
+            };
+        }
+        
+        function updateImpactTexts(loan) {
+            // Asset Price Impact
+            const avgLoan = 53600;
+            const priceVsAvg = ((state.assetPrice - 40000) / 40000) * 100;
+            let assetImpact = '';
+            if (state.assetPrice < 35000) {
+                assetImpact = '✅ Lower price = more farmers served with same capital. Good for scale but ensure quality isn\'t compromised';
+            } else if (state.assetPrice > 50000) {
+                assetImpact = '⚠️ Premium pricing = fewer loans per float. Monthly payment is Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString() + ' - ensure farmers can afford this';
+            } else {
+                assetImpact = 'Moderate pricing. Balance between quality and affordability. Monthly payment: Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString();
+            }
+            document.getElementById('assetPriceImpact').innerHTML = assetImpact;
+            
+            // Interest Rate Impact
+            const effectiveAnnual = state.interestRate * 12;
+            let rateImpact = '';
+            if (state.interestRate <= 2.5) {
+                rateImpact = '💚 Low rate (' + effectiveAnnual.toFixed(0) + '% annual) = farmer-friendly BUT check if you hit profit targets. Great for social impact';
+            } else if (state.interestRate >= 6) {
+                rateImpact = '⚠️ High rate (' + effectiveAnnual.toFixed(0) + '% annual) = high profit BUT increases default risk. Debt burden may be unsustainable';
+            } else {
+                rateImpact = 'Balanced rate (' + effectiveAnnual.toFixed(0) + '% annual). Interest generates Kshs. ' + Math.round(loan.totalInterest).toLocaleString() + ' per loan';
+            }
+            document.getElementById('interestRateImpact').innerHTML = rateImpact;
+            
+            // Tenure Impact
+            const paymentReduction = state.tenure > 12 ? ((1 - 12/state.tenure) * 100).toFixed(0) : 0;
+            let tenureImpact = '';
+            if (state.tenure <= 9) {
+                tenureImpact = '⚡ Short tenure = HIGH monthly payment (Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString() + '). Fast capital turnover but risky for farmers';
+            } else if (state.tenure >= 18) {
+                tenureImpact = '🐢 Long tenure = lower payment (Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString() + ') helps farmers BUT ties up capital for ' + state.tenure + ' months';
+            } else {
+                tenureImpact = 'Standard ' + state.tenure + '-month cycle. Payment: Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString() + '/month. Balanced approach';
+            }
+            document.getElementById('tenureImpact').innerHTML = tenureImpact;
+            
+            // Deposit Impact
+            let depositImpact = '';
+            if (state.deposit === 0) {
+                depositImpact = '🚀 Zero deposit = maximum reach to poorest farmers BUT highest default risk. You finance 100% = maximum exposure';
+            } else if (state.deposit >= 20) {
+                depositImpact = '🛡️ High deposit (Kshs. ' + Math.round(loan.farmerDeposit).toLocaleString() + ') = strong commitment BUT excludes many farmers who can\'t save this much';
+            } else {
+                depositImpact = state.deposit + '% deposit (Kshs. ' + Math.round(loan.farmerDeposit).toLocaleString() + ') shows commitment while staying accessible to most farmers';
+            }
+            document.getElementById('depositImpact').innerHTML = depositImpact;
+        }
+        
+        function generateScaleComparison(loan) {
+            const scales = [10, 50, 100, 500, 1000];
+            const container = document.getElementById('scaleComparison');
+            
+            let html = '';
+            scales.forEach(numFarmers => {
+                const portfolioValue = loan.grossPrincipal * numFarmers;
+                const totalInterestRevenue = loan.totalInterest * numFarmers;
+                const totalFeeRevenue = (state.serviceFee + loan.deductibleAmount) * numFarmers;
+                const expectedRevenue = totalInterestRevenue + totalFeeRevenue;
+                const costOfCapital = portfolioValue * (state.capitalCost / 100);
+                const expectedLosses = portfolioValue * (state.defaultRate / 100);
+                const netProfit = expectedRevenue - costOfCapital - expectedLosses;
+                const roe = (netProfit / portfolioValue) * 100;
+                
+                const isActive = numFarmers === state.numFarmers ? 'active' : '';
+                const profitColor = netProfit > 0 ? '#065F46' : '#991B1B';
+                
+                let scaleType = '';
+                if (numFarmers <= 10) scaleType = 'Pilot';
+                else if (numFarmers <= 50) scaleType = 'Small';
+                else if (numFarmers <= 100) scaleType = 'Medium';
+                else if (numFarmers <= 500) scaleType = 'Large';
+                else scaleType = 'Enterprise';
+                
+                html += `
+                    <div class="scale-card ${isActive}">
+                        <div class="scale-number">${numFarmers}</div>
+                        <div class="scale-label">${scaleType} Scale</div>
+                        <div class="scale-metrics">
+                            <div>Float: <strong>Kshs. ${(portfolioValue / 1000000).toFixed(1)}M</strong></div>
+                            <div>Revenue: <strong>${(expectedRevenue / 1000).toFixed(0)}K</strong></div>
+                            <div style="color: ${profitColor};">Profit: <strong>${(netProfit / 1000).toFixed(0)}K</strong></div>
+                            <div>ROE: <strong>${roe.toFixed(1)}%</strong></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function updateAll() {
+            const loan = calculateLoan();
+            
+            // Update slider displays
+            document.getElementById('assetPriceValue').textContent = state.assetPrice.toLocaleString();
+            document.getElementById('interestRateValue').textContent = state.interestRate;
+            document.getElementById('tenureValue').textContent = state.tenure;
+            document.getElementById('depositValue').textContent = state.deposit;
+            document.getElementById('serviceFeeValue').textContent = state.serviceFee.toLocaleString();
+            document.getElementById('deductibleValue').textContent = state.deductible;
+            document.getElementById('incomeValue').textContent = state.monthlyIncome.toLocaleString();
+            document.getElementById('expensesValue').textContent = state.monthlyExpenses.toLocaleString();
+            document.getElementById('goatIncomeValue').textContent = state.goatIncome.toLocaleString();
+            document.getElementById('numFarmersValue').textContent = state.numFarmers;
+            document.getElementById('defaultRateValue').textContent = state.defaultRate;
+            document.getElementById('capitalCostValue').textContent = state.capitalCost;
+            
+            // Update impact texts
+            updateImpactTexts(loan);
+            
+            // Update loan breakdown
+            document.getElementById('grossPrincipal').textContent = Math.round(loan.grossPrincipal).toLocaleString();
+            document.getElementById('farmerDeposit').textContent = Math.round(loan.farmerDeposit).toLocaleString();
+            document.getElementById('netDisbursed').textContent = Math.round(loan.netDisbursed).toLocaleString();
+            document.getElementById('totalInterest').textContent = Math.round(loan.totalInterest).toLocaleString();
+            
+            // Update payment analysis
+            document.getElementById('monthlyPayment').textContent = Math.round(loan.monthlyPayment).toLocaleString();
+            document.getElementById('tenureDisplay').textContent = state.tenure;
+            document.getElementById('totalRepayable').textContent = Math.round(loan.totalRepayable).toLocaleString();
+            document.getElementById('trueCost').textContent = Math.round(loan.trueCost).toLocaleString();
+            
+            // Update farmer viability
+            const totalIncome = state.monthlyIncome + state.goatIncome;
+            const availableCash = totalIncome - state.monthlyExpenses;
+            const afterPayment = availableCash - loan.monthlyPayment;
+            const debtToIncome = (loan.monthlyPayment / totalIncome) * 100;
+            
+            document.getElementById('availableCash').textContent = Math.round(availableCash).toLocaleString();
+            document.getElementById('afterPayment').textContent = Math.round(afterPayment).toLocaleString();
+            document.getElementById('debtToIncome').textContent = Math.round(debtToIncome) + '%';
+            
+            // Determine risk level
+            let risk = 'Low';
+            let affordability = 'affordable';
+            let message = '✅ SAFE: Comfortable cashflow and manageable debt burden';
+            
+            if (debtToIncome > 40 || afterPayment < 0) {
+                risk = 'High';
+                affordability = 'risky';
+                message = '⚠️ HIGH RISK: Negative cashflow or excessive debt burden';
+            } else if (debtToIncome > 30 || afterPayment < 2000) {
+                risk = 'Moderate';
+                affordability = 'moderate';
+                message = '⚡ MODERATE RISK: Tight cashflow or elevated debt burden';
+            }
+            
+            document.getElementById('defaultRisk').textContent = risk;
+            document.getElementById('affordabilityIndicator').textContent = message;
+            document.getElementById('affordabilityIndicator').className = 'affordability-indicator ' + affordability;
+            
+            // Update original cashflow for scenarios
+            document.getElementById('originalCashflow').textContent = Math.round(afterPayment).toLocaleString();
+            document.getElementById('scenarioCashflow').textContent = Math.round(afterPayment).toLocaleString();
+            document.getElementById('cashflowChange').textContent = '0';
+            
+            // Update portfolio
+            const portfolioValue = loan.grossPrincipal * state.numFarmers;
+            const totalInterestRevenue = loan.totalInterest * state.numFarmers;
+            const totalFeeRevenue = (state.serviceFee + loan.deductibleAmount) * state.numFarmers;
+            const expectedRevenue = totalInterestRevenue + totalFeeRevenue;
+            const costOfCapital = portfolioValue * (state.capitalCost / 100);
+            const expectedLosses = portfolioValue * (state.defaultRate / 100);
+            const netProfit = expectedRevenue - costOfCapital - expectedLosses;
+            const roe = (netProfit / portfolioValue) * 100;
+            
+            document.getElementById('portfolioValue').textContent = (portfolioValue / 1000000).toFixed(2) + 'M';
+            document.getElementById('expectedRevenue').textContent = (expectedRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('costOfCapital').textContent = (costOfCapital / 1000).toFixed(0) + 'K';
+            document.getElementById('expectedLosses').textContent = (expectedLosses / 1000).toFixed(0) + 'K';
+            document.getElementById('netProfit').textContent = (netProfit / 1000000).toFixed(2) + 'M';
+            document.getElementById('roe').textContent = roe.toFixed(1) + '%';
+            
+            // Update scale comparison
+            generateScaleComparison(loan);
+            
+            // Update charts
+            updateCharts(loan);
+            updatePortfolioChart();
+        }
+        
+        function updateCharts(loan) {
+            // Update breakdown chart
+            breakdownChart.data.datasets[0].data = [
+                state.assetPrice,
+                state.serviceFee,
+                loan.insurance,
+                loan.totalInterest
+            ];
+            breakdownChart.update();
+            
+            // Update payment chart
+            paymentChart.data.labels = Array.from({length: state.tenure}, (_, i) => `M${i+1}`);
+            paymentChart.data.datasets[0].data = Array(state.tenure).fill(loan.monthlyPayment);
+            paymentChart.update();
+        }
+        
+        function updatePortfolioChart() {
+            const loan = calculateLoan();
+            const portfolioValue = loan.grossPrincipal * state.numFarmers;
+            
+            // Current model
+            const current = {
+                revenue: (loan.totalInterest + state.serviceFee + loan.deductibleAmount) * state.numFarmers,
+                capitalCost: portfolioValue * (state.capitalCost / 100),
+                losses: portfolioValue * (state.defaultRate / 100)
+            };
+            current.profit = current.revenue - current.capitalCost - current.losses;
+            
+            // Lower rate (-1%)
+            const tempRate = state.interestRate;
+            state.interestRate = tempRate - 1;
+            const loanLower = calculateLoan();
+            const lowerRate = {
+                revenue: (loanLower.totalInterest + state.serviceFee + loanLower.deductibleAmount) * state.numFarmers,
+                capitalCost: portfolioValue * (state.capitalCost / 100),
+                losses: portfolioValue * ((state.defaultRate - 2) / 100) // Assume lower defaults
+            };
+            lowerRate.profit = lowerRate.revenue - lowerRate.capitalCost - lowerRate.losses;
+            state.interestRate = tempRate;
+            
+            // Higher tenure
+            const tempTenure = state.tenure;
+            state.tenure = tempTenure + 6;
+            const loanTenure = calculateLoan();
+            const higherTenure = {
+                revenue: (loanTenure.totalInterest + state.serviceFee + loanTenure.deductibleAmount) * state.numFarmers,
+                capitalCost: (loan.grossPrincipal * state.numFarmers) * (state.capitalCost / 100) * 1.5,
+                losses: portfolioValue * ((state.defaultRate - 1) / 100)
+            };
+            higherTenure.profit = higherTenure.revenue - higherTenure.capitalCost - higherTenure.losses;
+            state.tenure = tempTenure;
+            
+            // Lower deposit
+            const tempDeposit = state.deposit;
+            state.deposit = tempDeposit - 5;
+            const loanDeposit = calculateLoan();
+            const lowerDeposit = {
+                revenue: (loanDeposit.totalInterest + state.serviceFee + loanDeposit.deductibleAmount) * state.numFarmers,
+                capitalCost: (loanDeposit.grossPrincipal * state.numFarmers) * (state.capitalCost / 100),
+                losses: (loanDeposit.grossPrincipal * state.numFarmers) * ((state.defaultRate + 2) / 100)
+            };
+            lowerDeposit.profit = lowerDeposit.revenue - lowerDeposit.capitalCost - lowerDeposit.losses;
+            state.deposit = tempDeposit;
+            
+            portfolioChart.data.datasets[0].data = [
+                current.profit,
+                lowerRate.profit,
+                higherTenure.profit,
+                lowerDeposit.profit
+            ];
+            portfolioChart.data.datasets[1].data = [
+                current.losses,
+                lowerRate.losses,
+                higherTenure.losses,
+                lowerDeposit.losses
+            ];
+            portfolioChart.data.datasets[2].data = [
+                current.capitalCost,
+                lowerRate.capitalCost,
+                higherTenure.capitalCost,
+                lowerDeposit.capitalCost
+            ];
+            portfolioChart.update();
+        }
+        
+        function loadPersona(personaKey) {
+            state.currentPersona = personaKey;
+            const persona = personas[personaKey];
+            
+            state.monthlyIncome = persona.income;
+            state.monthlyExpenses = persona.expenses;
+            state.goatIncome = persona.goatIncome;
+            
+            document.getElementById('monthlyIncome').value = persona.income;
+            document.getElementById('monthlyExpenses').value = persona.expenses;
+            document.getElementById('goatIncome').value = persona.goatIncome;
+            
+            // Update active state
+            document.querySelectorAll('.persona-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.persona-card').classList.add('active');
+            
+            updateAll();
+        }
+        
+        function runScenario(scenarioType) {
+            const loan = calculateLoan();
+            const originalIncome = state.monthlyIncome;
+            const originalGoatIncome = state.goatIncome;
+            let newIncome = originalIncome;
+            let newGoatIncome = originalGoatIncome;
+            let scenarioText = '';
+            
+            switch(scenarioType) {
+                case 'drought':
+                    newIncome = originalIncome * 0.7;
+                    scenarioText = 'Drought reduces overall income by 30%';
+                    break;
+                case 'bumper':
+                    newIncome = originalIncome * 1.2;
+                    scenarioText = 'Bumper harvest increases overall income by 20%';
+                    break;
+                case 'sick':
+                    newGoatIncome = originalGoatIncome * 0.5;
+                    scenarioText = 'Goat illness reduces milk income by 50%';
+                    break;
+                case 'prices':
+                    newGoatIncome = originalGoatIncome * 1.4;
+                    scenarioText = 'Rising milk prices increase goat income by 40%';
+                    break;
+            }
+            
+            const originalTotal = originalIncome + originalGoatIncome;
+            const originalCashflow = originalTotal - state.monthlyExpenses - loan.monthlyPayment;
+            
+            const newTotal = newIncome + newGoatIncome;
+            const newCashflow = newTotal - state.monthlyExpenses - loan.monthlyPayment;
+            const change = newCashflow - originalCashflow;
+            
+            document.getElementById('scenarioResult').style.display = 'block';
+            document.getElementById('scenarioText').textContent = scenarioText;
+            document.getElementById('scenarioCashflow').textContent = Math.round(newCashflow).toLocaleString();
+            document.getElementById('cashflowChange').textContent = (change >= 0 ? '+' : '') + Math.round(change).toLocaleString();
+            document.getElementById('cashflowChange').style.color = change >= 0 ? '#10B981' : '#EF4444';
+        }
+        
+        function resetDefaults() {
+            state = {
+                assetPrice: 40000,
+                interestRate: 4.5,
+                tenure: 12,
+                deposit: 10,
+                serviceFee: 11800,
+                deductible: 4,
+                monthlyIncome: 15000,
+                monthlyExpenses: 9000,
+                goatIncome: 3000,
+                numFarmers: 100,
+                defaultRate: 10,
+                capitalCost: 12,
+                currentPersona: 'jane'
+            };
+            
+            // Reset all sliders
+            document.getElementById('assetPrice').value = 40000;
+            document.getElementById('interestRate').value = 4.5;
+            document.getElementById('tenure').value = 12;
+            document.getElementById('deposit').value = 10;
+            document.getElementById('serviceFee').value = 11800;
+            document.getElementById('deductible').value = 4;
+            document.getElementById('monthlyIncome').value = 15000;
+            document.getElementById('monthlyExpenses').value = 9000;
+            document.getElementById('goatIncome').value = 3000;
+            document.getElementById('numFarmers').value = 100;
+            document.getElementById('defaultRate').value = 10;
+            document.getElementById('capitalCost').value = 12;
+            
+            // Reset persona selection
+            document.querySelectorAll('.persona-card').forEach((card, index) => {
+                card.classList.remove('active');
+                if (index === 0) card.classList.add('active');
+            });
+            
+            document.getElementById('scenarioResult').style.display = 'none';
+            
+            updateAll();
+        }
+        
+        function calculateFloatReturn() {
+            const floatInvestment = parseFloat(document.getElementById('floatInvestment').value) || 0;
+            const targetReturn = parseFloat(document.getElementById('targetReturn').value) || 0;
+            
+            if (floatInvestment === 0) {
+                alert('Please enter a valid float investment amount');
+                return;
+            }
+            
+            const loan = calculateLoan();
+            
+            // Calculate number of loans possible with float
+            const numLoans = Math.floor(floatInvestment / loan.grossPrincipal);
+            
+            // Calculate revenue (interest + fees collected)
+            const interestPerLoan = loan.totalInterest;
+            const feesPerLoan = state.serviceFee + loan.deductibleAmount;
+            const revenuePerLoan = interestPerLoan + feesPerLoan;
+            const totalRevenue = revenuePerLoan * numLoans;
+            
+            // Calculate costs
+            const costOfCapital = floatInvestment * (state.capitalCost / 100);
+            const expectedLosses = floatInvestment * (state.defaultRate / 100);
+            const totalCosts = costOfCapital + expectedLosses;
+            
+            // Calculate actual return
+            const netProfit = totalRevenue - totalCosts;
+            const actualReturnPercent = (netProfit / floatInvestment) * 100;
+            
+            // Update display
+            document.getElementById('floatResults').style.display = 'block';
+            document.getElementById('numLoans').textContent = numLoans;
+            document.getElementById('totalRevenue').textContent = (totalRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('actualReturn').textContent = actualReturnPercent.toFixed(1) + '%';
+            document.getElementById('profitAmount').textContent = (netProfit / 1000000).toFixed(2) + 'M';
+            
+            // Generate impact explanation
+            generateImpactExplanation(floatInvestment, numLoans, totalRevenue, actualReturnPercent, targetReturn, loan);
+            
+            // Generate recommendations
+            generateRecommendations(actualReturnPercent, targetReturn, floatInvestment, numLoans, loan);
+        }
+        
+        function generateImpactExplanation(float, numLoans, revenue, actualReturn, targetReturn, loan) {
+            const avgMonthlyPayment = loan.monthlyPayment;
+            const totalFarmersServed = numLoans;
+            const returnDiff = actualReturn - targetReturn;
+            
+            let explanation = `With your Kshs. ${(float / 1000000).toFixed(1)}M investment, you can serve ${totalFarmersServed} farmers. `;
+            explanation += `Each farmer pays Kshs. ${Math.round(avgMonthlyPayment).toLocaleString()}/month. `;
+            explanation += `Your current model generates ${actualReturn.toFixed(1)}% annual return `;
+            
+            if (returnDiff >= 0) {
+                explanation += `— <strong style="color: #065F46;">EXCEEDING your ${targetReturn}% target by ${returnDiff.toFixed(1)} percentage points! 🎉</strong>`;
+            } else {
+                explanation += `— <strong style="color: #92400E;">BELOW your ${targetReturn}% target by ${Math.abs(returnDiff).toFixed(1)} percentage points.</strong>`;
+            }
+            
+            document.getElementById('currentImpact').innerHTML = explanation;
+        }
+        
+        function generateRecommendations(actualReturn, targetReturn, float, numLoans, loan) {
+            const returnGap = targetReturn - actualReturn;
+            const recommendations = [];
+            
+            if (returnGap > 0) {
+                // Need to increase return
+                recommendations.push({
+                    icon: '📈',
+                    text: `<strong>Increase interest rate to ${(state.interestRate + 0.5).toFixed(1)}%</strong> — This would add ~${(float * 0.05 / 1000000).toFixed(2)}M in additional revenue (${(5).toFixed(1)}% more return)`
+                });
+                
+                recommendations.push({
+                    icon: '💰',
+                    text: `<strong>Increase service fee to Kshs. ${(state.serviceFee + 2000).toLocaleString()}</strong> — This adds Kshs. ${(numLoans * 2000).toLocaleString()} in upfront revenue`
+                });
+                
+                recommendations.push({
+                    icon: '📊',
+                    text: `<strong>Reduce expected defaults to ${Math.max(5, state.defaultRate - 2)}%</strong> — Better screening saves Kshs. ${((float * 0.02) / 1000).toFixed(0)}K, adding ${(2).toFixed(1)}% to returns`
+                });
+                
+                recommendations.push({
+                    icon: '⏱️',
+                    text: `<strong>Shorten tenure to ${Math.max(6, state.tenure - 3)} months</strong> — Faster capital turnover lets you do 2 cycles/year, potentially doubling returns`
+                });
+                
+            } else if (returnGap < 0 && actualReturn > targetReturn * 1.2) {
+                // Return is much higher than needed - can improve farmer experience
+                recommendations.push({
+                    icon: '💚',
+                    text: `<strong>Reduce interest rate to ${Math.max(2, state.interestRate - 1).toFixed(1)}%</strong> — You're over-earning! Lower rates to ${Math.max(2, state.interestRate - 1).toFixed(1)}% would still give ${(actualReturn - 8).toFixed(1)}% return while making loans more affordable`
+                });
+                
+                recommendations.push({
+                    icon: '🎯',
+                    text: `<strong>Increase loan tenure to ${state.tenure + 6} months</strong> — Monthly payments drop from Kshs. ${Math.round(loan.monthlyPayment).toLocaleString()} to ~Kshs. ${Math.round(loan.monthlyPayment * 0.7).toLocaleString()}, improving farmer cashflow`
+                });
+                
+                recommendations.push({
+                    icon: '🤝',
+                    text: `<strong>Reduce farmer deposit to ${Math.max(0, state.deposit - 5)}%</strong> — Lower barrier to entry lets you reach more farmers in need while staying profitable`
+                });
+                
+                recommendations.push({
+                    icon: '📈',
+                    text: `<strong>Scale up operations</strong> — Your model is highly profitable. Consider increasing float to serve ${Math.round(numLoans * 1.5)} farmers and triple your impact`
+                });
+                
+            } else {
+                // Just right - optimize for sustainability
+                recommendations.push({
+                    icon: '✅',
+                    text: `<strong>Perfect balance achieved!</strong> — Your ${actualReturn.toFixed(1)}% return meets your ${targetReturn}% target. Focus on:
+                        <br>• Maintaining default rates below ${state.defaultRate}%
+                        <br>• Building farmer loyalty through fair terms
+                        <br>• Gradual scaling with proven model`
+                });
+                
+                recommendations.push({
+                    icon: '⚖️',
+                    text: `<strong>Fine-tune for sustainability</strong> — Consider slight rate reduction (to ${(state.interestRate - 0.5).toFixed(1)}%) with improved collections to maintain ${(actualReturn - 3).toFixed(1)}% returns while improving farmer outcomes`
+                });
+                
+                recommendations.push({
+                    icon: '🎓',
+                    text: `<strong>Add value-added services</strong> — Use your strong position to offer training, vet services, or input financing to reduce defaults and increase farmer success`
+                });
+            }
+            
+            // Add impact-based insights
+            const dtIRatio = (loan.monthlyPayment / (state.monthlyIncome + state.goatIncome)) * 100;
+            if (dtIRatio > 40) {
+                recommendations.push({
+                    icon: '⚠️',
+                    text: `<strong>Warning: High farmer burden</strong> — Current DTI ratio is ${dtIRatio.toFixed(0)}%. Farmers struggle when paying >${40}% of income. Consider reducing rate or extending tenure to prevent defaults`
+                });
+            }
+            
+            // Render recommendations
+            const listHTML = recommendations.map(rec => 
+                `<div class="recommendation-item">${rec.icon} ${rec.text}</div>`
+            ).join('');
+            
+            document.getElementById('recommendationList').innerHTML = listHTML;
+        }
+    </script>
+</body>
+</html>
