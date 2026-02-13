@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Enablement Loan Simulator</title>
+    <title>Asset Enablement Loan Simulator - Imfuyo Partnership</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap');
@@ -24,6 +24,8 @@
             --accent-green: #10B981;
             --accent-yellow: #F59E0B;
             --accent-red: #EF4444;
+            --accent-blue: #3B82F6;
+            --accent-purple: #8B5CF6;
         }
         
         body {
@@ -59,6 +61,20 @@
             font-size: 0.95rem;
             color: var(--slate);
             font-weight: 400;
+        }
+        
+        .partnership-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         
         .dashboard {
@@ -193,6 +209,16 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
+        .metric-card.imfuyo {
+            border-left-color: var(--accent-green);
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+        }
+        
+        .metric-card.financier {
+            border-left-color: var(--accent-blue);
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+        }
+        
         .metric-label {
             font-size: 0.75rem;
             color: var(--slate);
@@ -212,6 +238,118 @@
             font-size: 0.7rem;
             color: var(--slate-light);
             margin-top: 0.25rem;
+        }
+        
+        .service-breakdown {
+            background: var(--cream);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .service-breakdown-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--slate-dark);
+            font-size: 0.9rem;
+        }
+        
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--cream-dark);
+            font-size: 0.85rem;
+        }
+        
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        
+        .service-name {
+            color: var(--slate-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .service-icon {
+            font-size: 1rem;
+        }
+        
+        .service-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--black);
+        }
+        
+        .roi-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .roi-card {
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .roi-card.financier {
+            background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%);
+            border: 2px solid var(--accent-blue);
+        }
+        
+        .roi-card.imfuyo {
+            background: linear-gradient(135deg, #D1FAE5 0%, #6EE7B7 100%);
+            border: 2px solid var(--accent-green);
+        }
+        
+        .roi-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .roi-card.financier .roi-title {
+            color: #1E40AF;
+        }
+        
+        .roi-card.imfuyo .roi-title {
+            color: #065F46;
+        }
+        
+        .roi-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .roi-card.financier .roi-value {
+            color: #1E3A8A;
+        }
+        
+        .roi-card.imfuyo .roi-value {
+            color: #064E3B;
+        }
+        
+        .roi-breakdown {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        
+        .roi-breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
         }
         
         .chart-container {
@@ -486,51 +624,6 @@
             color: #4F46E5;
         }
         
-        .scale-card {
-            background: white;
-            padding: 0.875rem;
-            border-radius: 8px;
-            border: 2px solid var(--cream-dark);
-            transition: all 0.3s ease;
-        }
-        
-        .scale-card:hover {
-            border-color: var(--black);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .scale-card.active {
-            border-color: var(--black);
-            background: var(--cream);
-        }
-        
-        .scale-number {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--black);
-            margin-bottom: 0.25rem;
-        }
-        
-        .scale-label {
-            font-size: 0.7rem;
-            color: var(--slate);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-        
-        .scale-metrics {
-            font-size: 0.75rem;
-            color: var(--slate-dark);
-            line-height: 1.4;
-        }
-        
-        .scale-metrics div {
-            margin-bottom: 0.25rem;
-        }
-        
         .info-icon {
             display: inline-block;
             width: 18px;
@@ -648,7 +741,11 @@
     <div class="container">
         <header>
             <h1>🐐 Asset Enablement Loan Simulator</h1>
-            <p class="subtitle">Interactive model to explore dairy goat financing scenarios and optimize lending strategies</p>
+            <p class="subtitle">Interactive model to explore dairy goat financing with Imfuyo partnership & Mbuzi Plus orchestration</p>
+            <div class="partnership-badge">
+                <span>🤝</span>
+                <span>Financier × Imfuyo Partnership Model</span>
+            </div>
         </header>
         
         <div class="dashboard">
@@ -659,7 +756,7 @@
                     Loan Parameters
                     <div class="tooltip">
                         <span class="info-icon">?</span>
-                        <span class="tooltiptext">Adjust these parameters to see how different loan structures affect affordability and profitability. All changes update in real-time.</span>
+                        <span class="tooltiptext">Adjust these parameters to see how different loan structures affect affordability and profitability for both partners.</span>
                     </div>
                 </div>
                 
@@ -701,14 +798,6 @@
                 
                 <div class="control-group">
                     <div class="control-label">
-                        <span>Service Fee (Kshs.)</span>
-                        <span class="control-value">Kshs. <span id="serviceFeeValue">11,800</span></span>
-                    </div>
-                    <input type="range" min="5000" max="20000" step="500" value="11800" class="slider" id="serviceFee">
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
                         <span>Deductible (%)</span>
                         <span class="control-value"><span id="deductibleValue">4</span>%</span>
                     </div>
@@ -718,7 +807,65 @@
                 <button class="reset-btn" onclick="resetDefaults()">Reset to Defaults</button>
             </div>
             
-            <!-- Panel 2: Loan Breakdown -->
+            <!-- Panel 2: Imfuyo Services Breakdown -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">🌾</span>
+                    Imfuyo Programme Services
+                </div>
+                
+                <div class="service-breakdown">
+                    <div class="service-breakdown-title">Service Fee Breakdown (Kshs. <span id="totalServiceFee">11,800</span>)</div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">📚</span>
+                            Training & Technical Support
+                        </div>
+                        <div class="service-amount">3,500</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">🩺</span>
+                            Veterinary Services
+                        </div>
+                        <div class="service-amount">2,800</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">📱</span>
+                            Digital Platform Access (Mbuzi Plus)
+                        </div>
+                        <div class="service-amount">2,000</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">🔍</span>
+                            Farmer Vetting & Monitoring
+                        </div>
+                        <div class="service-amount">1,500</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">🍃</span>
+                            Initial Feed Package (1 month)
+                        </div>
+                        <div class="service-amount">1,000</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">
+                            <span class="service-icon">🛡️</span>
+                            Insurance Premium (4.5% of asset)
+                        </div>
+                        <div class="service-amount" id="insuranceAmount">1,800</div>
+                    </div>
+                </div>
+                
+                <div class="help-text">
+                    <strong>🤝 Partnership Model:</strong> Imfuyo provides comprehensive support including training, vet services, digital tools via Mbuzi Plus, farmer monitoring, and initial feed. They earn 1% of each loan as their commission for orchestrating the entire programme.
+                </div>
+            </div>
+            
+            <!-- Panel 3: Loan Breakdown -->
             <div class="panel">
                 <div class="panel-header">
                     <span class="panel-icon">💰</span>
@@ -753,14 +900,105 @@
                 </div>
                 
                 <div class="help-text">
-                    <strong>💡 How it works:</strong> The gross principal includes the asset price, service fee, and insurance. The farmer pays a deposit upfront, and a deductible is taken at disbursement. Interest is calculated using a flat rate method on the net financed balance.
+                    <strong>💡 How it works:</strong> The gross principal includes the asset price, Imfuyo service fee, and insurance. The farmer pays a deposit upfront, and a deductible is taken at disbursement. Interest is calculated using a flat rate method on the net financed balance.
                 </div>
             </div>
             
-            <!-- Panel 3: Monthly Payment & Total Cost -->
-            <div class="panel">
+            <!-- Panel 4: Partnership ROI Comparison -->
+            <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">📊</span>
+                    Partnership ROI: Financier vs Imfuyo
+                    <div class="tooltip">
+                        <span class="info-icon">?</span>
+                        <span class="tooltiptext">See the revenue and return breakdown for both partners. Financier earns interest income, Imfuyo earns 1% commission plus feed sales.</span>
+                    </div>
+                </div>
+                
+                <div class="roi-comparison">
+                    <div class="roi-card financier">
+                        <div class="roi-title">💼 FINANCIER RETURNS</div>
+                        <div class="roi-value" id="financierROI">33.2%</div>
+                        <div class="roi-breakdown">
+                            <div class="roi-breakdown-item">
+                                <span>Interest Revenue:</span>
+                                <strong id="financierInterest">25,713</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Deductible Fee:</span>
+                                <strong id="financierDeductible">1,984</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Total Revenue/Loan:</span>
+                                <strong id="financierTotal">27,697</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Per 100 Farmers:</span>
+                                <strong id="financierPer100">2.77M</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="roi-card imfuyo">
+                        <div class="roi-title">🌾 IMFUYO RETURNS</div>
+                        <div class="roi-value" id="imfuyoROI">45.8%</div>
+                        <div class="roi-breakdown">
+                            <div class="roi-breakdown-item">
+                                <span>Service Fee:</span>
+                                <strong id="imfuyoServiceFee">11,800</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>1% Commission:</span>
+                                <strong id="imfuyoCommission">536</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Feed Margin:</span>
+                                <strong id="imfuyoFeedMargin">300</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Total Revenue/Loan:</span>
+                                <strong id="imfuyoTotal">12,636</strong>
+                            </div>
+                            <div class="roi-breakdown-item">
+                                <span>Per 100 Farmers:</span>
+                                <strong id="imfuyoPer100">1.26M</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics-grid" style="margin-top: 1.5rem;">
+                    <div class="metric-card financier">
+                        <div class="metric-label">Financier Capital Deployed</div>
+                        <div class="metric-value" id="financierCapital">47,616</div>
+                        <div class="metric-subtext">Per farmer</div>
+                    </div>
+                    <div class="metric-card imfuyo">
+                        <div class="metric-label">Imfuyo Operational Cost</div>
+                        <div class="metric-value" id="imfuyoOpCost">8,500</div>
+                        <div class="metric-subtext">Delivering services</div>
+                    </div>
+                    <div class="metric-card financier">
+                        <div class="metric-label">Financier Net Profit</div>
+                        <div class="metric-value" id="financierProfit">21,713</div>
+                        <div class="metric-subtext">After capital costs</div>
+                    </div>
+                    <div class="metric-card imfuyo">
+                        <div class="metric-label">Imfuyo Net Profit</div>
+                        <div class="metric-value" id="imfuyoProfit">4,136</div>
+                        <div class="metric-subtext">After ops costs</div>
+                    </div>
+                </div>
+                
+                <div class="help-text">
+                    <strong>🤝 Win-Win Partnership:</strong> The financier provides capital and earns interest income (main revenue driver). Imfuyo orchestrates everything through Mbuzi Plus, earning service fees, 1% commission on loans, and margins on ongoing feed sales. Both partners benefit from scale.
+                </div>
+            </div>
+            
+            <!-- Panel 5: Monthly Payment & Total Cost -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
                     Payment Analysis
                 </div>
                 
@@ -787,11 +1025,11 @@
                 </div>
                 
                 <div class="help-text">
-                    <strong>💡 Understanding costs:</strong> The monthly payment is fixed throughout the loan period. True cost includes the upfront deposit, all monthly payments, and fees deducted at disbursement. This flat-rate model means you pay interest on the full amount for the entire duration.
+                    <strong>💡 Understanding costs:</strong> The monthly payment is fixed throughout the loan period. True cost includes the upfront deposit, all monthly payments, and fees deducted at disbursement. Imfuyo services ensure farmer success and reduce default risk.
                 </div>
             </div>
             
-            <!-- Panel 4: Farmer Viability -->
+            <!-- Panel 6: Farmer Viability -->
             <div class="panel">
                 <div class="panel-header">
                     <span class="panel-icon">👤</span>
@@ -865,18 +1103,18 @@
                 </div>
                 
                 <div class="help-text">
-                    <strong>💡 Affordability Guide:</strong> Green (Safe) = DTI under 30% and positive cashflow. Yellow (Moderate) = DTI 30-40% or tight cashflow. Red (Risky) = DTI over 40% or negative cashflow. Adjust income or loan terms to improve viability.
+                    <strong>💡 Affordability Guide:</strong> Green (Safe) = DTI under 30% and positive cashflow. Yellow (Moderate) = DTI 30-40% or tight cashflow. Red (Risky) = DTI over 40% or negative cashflow. Imfuyo training helps maximize goat productivity.
                 </div>
             </div>
             
-            <!-- Panel 5: Target Float Simulation -->
+            <!-- Panel 7: Target Float Simulation -->
             <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">🎯</span>
-                    Target Float Simulation: What Will You Get Back?
+                    Target Float Simulation: Partnership Returns Calculator
                     <div class="tooltip">
                         <span class="info-icon">?</span>
-                        <span class="tooltiptext">Enter your pilot investment amount and target return. The simulator will calculate your actual return and recommend optimal loan parameters to reach your goals.</span>
+                        <span class="tooltiptext">Enter your pilot investment to see returns for both the financier and Imfuyo. Includes all revenue streams for both partners.</span>
                     </div>
                 </div>
                 
@@ -895,41 +1133,76 @@
                     </div>
                 </div>
                 
-                <button class="calculate-btn" onclick="calculateFloatReturn()">🚀 Calculate My Returns & Get Recommendations</button>
+                <button class="calculate-btn" onclick="calculateFloatReturn()">🚀 Calculate Partnership Returns</button>
                 
                 <div id="floatResults" style="display: none;">
-                    <div class="results-grid">
-                        <div class="result-card">
-                            <div class="result-label">Number of Loans</div>
-                            <div class="result-value" id="numLoans">93</div>
+                    <div class="roi-comparison" style="margin-top: 1.5rem;">
+                        <div class="roi-card financier">
+                            <div class="roi-title">💼 Financier Total Returns</div>
+                            <div class="roi-breakdown">
+                                <div class="roi-breakdown-item">
+                                    <span>Number of Loans:</span>
+                                    <strong id="floatNumLoans">93</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>Total Interest:</span>
+                                    <strong id="floatFinancierInterest">2.39M</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>Deductible Fees:</span>
+                                    <strong id="floatFinancierFees">184K</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>Total Revenue:</span>
+                                    <strong id="floatFinancierRevenue">2.58M</strong>
+                                </div>
+                                <div class="roi-breakdown-item" style="border-top: 2px solid rgba(30, 64, 175, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;">
+                                    <span><strong>Annual Return:</strong></span>
+                                    <strong id="floatFinancierReturn" style="font-size: 1.3rem;">51.5%</strong>
+                                </div>
+                            </div>
                         </div>
-                        <div class="result-card">
-                            <div class="result-label">Total Revenue</div>
-                            <div class="result-value" id="totalRevenue">2.65M</div>
-                        </div>
-                        <div class="result-card">
-                            <div class="result-label">Actual Return (1yr)</div>
-                            <div class="result-value" id="actualReturn">33.2%</div>
-                        </div>
-                        <div class="result-card">
-                            <div class="result-label">Profit Amount</div>
-                            <div class="result-value" id="profitAmount">1.66M</div>
+                        
+                        <div class="roi-card imfuyo">
+                            <div class="roi-title">🌾 Imfuyo Total Returns</div>
+                            <div class="roi-breakdown">
+                                <div class="roi-breakdown-item">
+                                    <span>Service Fees:</span>
+                                    <strong id="floatImfuyoService">1.10M</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>1% Commissions:</span>
+                                    <strong id="floatImfuyoCommission">50K</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>Feed Margins:</span>
+                                    <strong id="floatImfuyoFeed">28K</strong>
+                                </div>
+                                <div class="roi-breakdown-item">
+                                    <span>Total Revenue:</span>
+                                    <strong id="floatImfuyoRevenue">1.18M</strong>
+                                </div>
+                                <div class="roi-breakdown-item" style="border-top: 2px solid rgba(6, 95, 70, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;">
+                                    <span><strong>Net Profit Margin:</strong></span>
+                                    <strong id="floatImfuyoMargin" style="font-size: 1.3rem;">32.7%</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
                     <div id="impactExplanation" class="impact-explanation">
-                        <strong>📊 What's Happening Now:</strong>
+                        <strong>📊 Partnership Impact:</strong>
                         <span id="currentImpact"></span>
                     </div>
                     
                     <div id="recommendations" class="recommendation-box">
-                        <div class="recommendation-title">💡 Smart Recommendations to Hit Your Target:</div>
+                        <div class="recommendation-title">💡 Smart Recommendations to Optimize Partnership:</div>
                         <div id="recommendationList"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Panel 6: Scenario Testing -->
+            <!-- Panel 8: Scenario Testing -->
             <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">🎮</span>
@@ -971,7 +1244,7 @@
                 </div>
             </div>
             
-            <!-- Panel 7: Portfolio Simulator -->
+            <!-- Panel 9: Portfolio Simulator -->
             <div class="panel full-width">
                 <div class="panel-header">
                     <span class="panel-icon">📈</span>
@@ -1008,30 +1281,30 @@
                         <div class="metric-value" id="portfolioValue">5.36M</div>
                         <div class="metric-subtext">Gross principal × farmers</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Expected Revenue</div>
-                        <div class="metric-value" id="expectedRevenue">2.85M</div>
-                        <div class="metric-subtext">Interest + fees collected</div>
+                    <div class="metric-card financier">
+                        <div class="metric-label">Financier Revenue</div>
+                        <div class="metric-value" id="financierPortfolioRevenue">2.77M</div>
+                        <div class="metric-subtext">Interest + deductible fees</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Cost of Capital</div>
-                        <div class="metric-value" id="costOfCapital">536K</div>
-                        <div class="metric-subtext">Annual financing cost</div>
+                    <div class="metric-card imfuyo">
+                        <div class="metric-label">Imfuyo Revenue</div>
+                        <div class="metric-value" id="imfuyoPortfolioRevenue">1.26M</div>
+                        <div class="metric-subtext">Services + commission + feed</div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-label">Expected Losses</div>
                         <div class="metric-value" id="expectedLosses">536K</div>
                         <div class="metric-subtext">From defaults</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Net Profit</div>
-                        <div class="metric-value" id="netProfit" style="font-size: 2rem;">1.78M</div>
-                        <div class="metric-subtext">After all costs</div>
+                    <div class="metric-card financier">
+                        <div class="metric-label">Financier Net Profit</div>
+                        <div class="metric-value" id="financierNetProfit" style="font-size: 2rem;">1.70M</div>
+                        <div class="metric-subtext">After capital costs & losses</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">ROE (Return on Equity)</div>
-                        <div class="metric-value" id="roe">33.2%</div>
-                        <div class="metric-subtext">Profit / Portfolio</div>
+                    <div class="metric-card imfuyo">
+                        <div class="metric-label">Imfuyo Net Profit</div>
+                        <div class="metric-value" id="imfuyoNetProfit" style="font-size: 2rem;">413K</div>
+                        <div class="metric-subtext">After operational costs</div>
                     </div>
                 </div>
                 
@@ -1040,14 +1313,7 @@
                 </div>
                 
                 <div class="help-text">
-                    <strong>💡 Portfolio Insights:</strong> This shows the business-level impact of your loan parameters. Revenue comes from interest and fees. Costs include the cost of capital (what it costs to borrow money) and expected losses from defaults. Lower interest rates reduce revenue but may reduce defaults. Find the optimal balance for sustainable growth.
-                </div>
-                
-                <div class="recommendation-box" style="margin-top: 1rem;">
-                    <div class="recommendation-title">📊 Scale Comparison: What Happens at Different Volumes?</div>
-                    <div id="scaleComparison" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-top: 0.75rem;">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
+                    <strong>💡 Portfolio Insights:</strong> This shows business-level impact for both partners. Financier revenue = interest + deductible fees. Imfuyo revenue = service fees + 1% commission + feed margins. Both share the risk of defaults, so strong farmer support (Imfuyo's role) reduces losses for everyone.
                 </div>
             </div>
         </div>
@@ -1068,7 +1334,10 @@
             numFarmers: 100,
             defaultRate: 10,
             capitalCost: 12,
-            currentPersona: 'jane'
+            currentPersona: 'jane',
+            feedCostPerFarmer: 1000,
+            feedMarginPercent: 30,
+            imfuyoCommissionPercent: 1
         };
         
         // Personas data
@@ -1094,10 +1363,10 @@
             breakdownChart = new Chart(breakdownCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Asset Price', 'Service Fee', 'Insurance', 'Interest'],
+                    labels: ['Asset Price', 'Imfuyo Services', 'Insurance', 'Interest'],
                     datasets: [{
                         data: [40000, 11800, 1800, 25713],
-                        backgroundColor: ['#0A0A0A', '#475569', '#64748B', '#F5E6C8'],
+                        backgroundColor: ['#0A0A0A', '#10B981', '#64748B', '#F5E6C8'],
                         borderWidth: 0
                     }]
                 },
@@ -1164,29 +1433,29 @@
                 }
             });
             
-            // Portfolio Chart (Stacked Bar)
+            // Portfolio Chart (Grouped Bar)
             const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
             portfolioChart = new Chart(portfolioCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Current Model', 'Lower Rate (-1%)', 'Higher Tenure (+6mo)', 'Lower Deposit (-5%)'],
+                    labels: ['Financier', 'Imfuyo'],
                     datasets: [
                         {
-                            label: 'Net Profit',
-                            data: [1780000, 1420000, 1650000, 1850000],
+                            label: 'Revenue',
+                            data: [2770000, 1263600],
                             backgroundColor: '#10B981',
                             borderRadius: 6
                         },
                         {
-                            label: 'Losses',
-                            data: [536000, 480000, 510000, 590000],
+                            label: 'Costs',
+                            data: [1072000, 850000],
                             backgroundColor: '#EF4444',
                             borderRadius: 6
                         },
                         {
-                            label: 'Capital Cost',
-                            data: [536000, 536000, 670000, 590000],
-                            backgroundColor: '#F59E0B',
+                            label: 'Net Profit',
+                            data: [1698000, 413600],
+                            backgroundColor: '#3B82F6',
                             borderRadius: 6
                         }
                     ]
@@ -1195,9 +1464,8 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { stacked: true },
                         y: {
-                            stacked: true,
+                            beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
                                     return 'Kshs. ' + (value / 1000000).toFixed(1) + 'M';
@@ -1216,7 +1484,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.dataset.label + ': Kshs. ' + context.parsed.y.toLocaleString();
+                                    return context.dataset.label + ': Kshs. ' + (context.parsed.y / 1000).toFixed(0) + 'K';
                                 }
                             }
                         }
@@ -1244,11 +1512,6 @@
             
             document.getElementById('deposit').addEventListener('input', (e) => {
                 state.deposit = parseInt(e.target.value);
-                updateAll();
-            });
-            
-            document.getElementById('serviceFee').addEventListener('input', (e) => {
-                state.serviceFee = parseInt(e.target.value);
                 updateAll();
             });
             
@@ -1305,6 +1568,16 @@
             const monthlyPayment = totalRepayable / state.tenure;
             const trueCost = farmerDeposit + totalRepayable + deductibleAmount;
             
+            // Partnership calculations
+            const imfuyoCommission = grossPrincipal * (state.imfuyoCommissionPercent / 100);
+            const imfuyoFeedMargin = state.feedCostPerFarmer * (state.feedMarginPercent / 100);
+            const imfuyoTotalRevenue = state.serviceFee + imfuyoCommission + imfuyoFeedMargin;
+            const imfuyoOpsCost = 8500; // Cost to deliver services per farmer
+            const imfuyoNetProfit = imfuyoTotalRevenue - imfuyoOpsCost;
+            
+            const financierRevenue = totalInterest + deductibleAmount;
+            const financierCapitalDeployed = netDisbursed;
+            
             return {
                 insurance,
                 grossPrincipal,
@@ -1316,14 +1589,19 @@
                 totalInterest,
                 totalRepayable,
                 monthlyPayment,
-                trueCost
+                trueCost,
+                imfuyoCommission,
+                imfuyoFeedMargin,
+                imfuyoTotalRevenue,
+                imfuyoOpsCost,
+                imfuyoNetProfit,
+                financierRevenue,
+                financierCapitalDeployed
             };
         }
         
         function updateImpactTexts(loan) {
             // Asset Price Impact
-            const avgLoan = 53600;
-            const priceVsAvg = ((state.assetPrice - 40000) / 40000) * 100;
             let assetImpact = '';
             if (state.assetPrice < 35000) {
                 assetImpact = '✅ Lower price = more farmers served with same capital. Good for scale but ensure quality isn\'t compromised';
@@ -1338,16 +1616,15 @@
             const effectiveAnnual = state.interestRate * 12;
             let rateImpact = '';
             if (state.interestRate <= 2.5) {
-                rateImpact = '💚 Low rate (' + effectiveAnnual.toFixed(0) + '% annual) = farmer-friendly BUT check if you hit profit targets. Great for social impact';
+                rateImpact = '💚 Low rate (' + effectiveAnnual.toFixed(0) + '% annual) = farmer-friendly BUT check if both partners hit profit targets';
             } else if (state.interestRate >= 6) {
-                rateImpact = '⚠️ High rate (' + effectiveAnnual.toFixed(0) + '% annual) = high profit BUT increases default risk. Debt burden may be unsustainable';
+                rateImpact = '⚠️ High rate (' + effectiveAnnual.toFixed(0) + '% annual) = high profit BUT increases default risk and farmer burden';
             } else {
                 rateImpact = 'Balanced rate (' + effectiveAnnual.toFixed(0) + '% annual). Interest generates Kshs. ' + Math.round(loan.totalInterest).toLocaleString() + ' per loan';
             }
             document.getElementById('interestRateImpact').innerHTML = rateImpact;
             
             // Tenure Impact
-            const paymentReduction = state.tenure > 12 ? ((1 - 12/state.tenure) * 100).toFixed(0) : 0;
             let tenureImpact = '';
             if (state.tenure <= 9) {
                 tenureImpact = '⚡ Short tenure = HIGH monthly payment (Kshs. ' + Math.round(loan.monthlyPayment).toLocaleString() + '). Fast capital turnover but risky for farmers';
@@ -1370,48 +1647,6 @@
             document.getElementById('depositImpact').innerHTML = depositImpact;
         }
         
-        function generateScaleComparison(loan) {
-            const scales = [10, 50, 100, 500, 1000];
-            const container = document.getElementById('scaleComparison');
-            
-            let html = '';
-            scales.forEach(numFarmers => {
-                const portfolioValue = loan.grossPrincipal * numFarmers;
-                const totalInterestRevenue = loan.totalInterest * numFarmers;
-                const totalFeeRevenue = (state.serviceFee + loan.deductibleAmount) * numFarmers;
-                const expectedRevenue = totalInterestRevenue + totalFeeRevenue;
-                const costOfCapital = portfolioValue * (state.capitalCost / 100);
-                const expectedLosses = portfolioValue * (state.defaultRate / 100);
-                const netProfit = expectedRevenue - costOfCapital - expectedLosses;
-                const roe = (netProfit / portfolioValue) * 100;
-                
-                const isActive = numFarmers === state.numFarmers ? 'active' : '';
-                const profitColor = netProfit > 0 ? '#065F46' : '#991B1B';
-                
-                let scaleType = '';
-                if (numFarmers <= 10) scaleType = 'Pilot';
-                else if (numFarmers <= 50) scaleType = 'Small';
-                else if (numFarmers <= 100) scaleType = 'Medium';
-                else if (numFarmers <= 500) scaleType = 'Large';
-                else scaleType = 'Enterprise';
-                
-                html += `
-                    <div class="scale-card ${isActive}">
-                        <div class="scale-number">${numFarmers}</div>
-                        <div class="scale-label">${scaleType} Scale</div>
-                        <div class="scale-metrics">
-                            <div>Float: <strong>Kshs. ${(portfolioValue / 1000000).toFixed(1)}M</strong></div>
-                            <div>Revenue: <strong>${(expectedRevenue / 1000).toFixed(0)}K</strong></div>
-                            <div style="color: ${profitColor};">Profit: <strong>${(netProfit / 1000).toFixed(0)}K</strong></div>
-                            <div>ROE: <strong>${roe.toFixed(1)}%</strong></div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
         function updateAll() {
             const loan = calculateLoan();
             
@@ -1420,7 +1655,6 @@
             document.getElementById('interestRateValue').textContent = state.interestRate;
             document.getElementById('tenureValue').textContent = state.tenure;
             document.getElementById('depositValue').textContent = state.deposit;
-            document.getElementById('serviceFeeValue').textContent = state.serviceFee.toLocaleString();
             document.getElementById('deductibleValue').textContent = state.deductible;
             document.getElementById('incomeValue').textContent = state.monthlyIncome.toLocaleString();
             document.getElementById('expensesValue').textContent = state.monthlyExpenses.toLocaleString();
@@ -1431,6 +1665,10 @@
             
             // Update impact texts
             updateImpactTexts(loan);
+            
+            // Update service fee breakdown
+            document.getElementById('totalServiceFee').textContent = state.serviceFee.toLocaleString();
+            document.getElementById('insuranceAmount').textContent = Math.round(loan.insurance).toLocaleString();
             
             // Update loan breakdown
             document.getElementById('grossPrincipal').textContent = Math.round(loan.grossPrincipal).toLocaleString();
@@ -1443,6 +1681,30 @@
             document.getElementById('tenureDisplay').textContent = state.tenure;
             document.getElementById('totalRepayable').textContent = Math.round(loan.totalRepayable).toLocaleString();
             document.getElementById('trueCost').textContent = Math.round(loan.trueCost).toLocaleString();
+            
+            // Update ROI comparison
+            const financierROI = ((loan.financierRevenue / loan.financierCapitalDeployed) * 100).toFixed(1);
+            const imfuyoROI = ((loan.imfuyoNetProfit / loan.imfuyoOpsCost) * 100).toFixed(1);
+            
+            document.getElementById('financierROI').textContent = financierROI + '%';
+            document.getElementById('financierInterest').textContent = Math.round(loan.totalInterest).toLocaleString();
+            document.getElementById('financierDeductible').textContent = Math.round(loan.deductibleAmount).toLocaleString();
+            document.getElementById('financierTotal').textContent = Math.round(loan.financierRevenue).toLocaleString();
+            document.getElementById('financierPer100').textContent = ((loan.financierRevenue * 100) / 1000000).toFixed(2) + 'M';
+            
+            document.getElementById('imfuyoROI').textContent = imfuyoROI + '%';
+            document.getElementById('imfuyoServiceFee').textContent = state.serviceFee.toLocaleString();
+            document.getElementById('imfuyoCommission').textContent = Math.round(loan.imfuyoCommission).toLocaleString();
+            document.getElementById('imfuyoFeedMargin').textContent = Math.round(loan.imfuyoFeedMargin).toLocaleString();
+            document.getElementById('imfuyoTotal').textContent = Math.round(loan.imfuyoTotalRevenue).toLocaleString();
+            document.getElementById('imfuyoPer100').textContent = ((loan.imfuyoTotalRevenue * 100) / 1000000).toFixed(2) + 'M';
+            
+            document.getElementById('financierCapital').textContent = Math.round(loan.financierCapitalDeployed).toLocaleString();
+            document.getElementById('imfuyoOpCost').textContent = loan.imfuyoOpsCost.toLocaleString();
+            
+            const financierNetProfit = loan.financierRevenue - (loan.financierCapitalDeployed * (state.capitalCost / 100));
+            document.getElementById('financierProfit').textContent = Math.round(financierNetProfit).toLocaleString();
+            document.getElementById('imfuyoProfit').textContent = Math.round(loan.imfuyoNetProfit).toLocaleString();
             
             // Update farmer viability
             const totalIncome = state.monthlyIncome + state.goatIncome;
@@ -1479,28 +1741,33 @@
             document.getElementById('cashflowChange').textContent = '0';
             
             // Update portfolio
-            const portfolioValue = loan.grossPrincipal * state.numFarmers;
-            const totalInterestRevenue = loan.totalInterest * state.numFarmers;
-            const totalFeeRevenue = (state.serviceFee + loan.deductibleAmount) * state.numFarmers;
-            const expectedRevenue = totalInterestRevenue + totalFeeRevenue;
-            const costOfCapital = portfolioValue * (state.capitalCost / 100);
-            const expectedLosses = portfolioValue * (state.defaultRate / 100);
-            const netProfit = expectedRevenue - costOfCapital - expectedLosses;
-            const roe = (netProfit / portfolioValue) * 100;
-            
-            document.getElementById('portfolioValue').textContent = (portfolioValue / 1000000).toFixed(2) + 'M';
-            document.getElementById('expectedRevenue').textContent = (expectedRevenue / 1000000).toFixed(2) + 'M';
-            document.getElementById('costOfCapital').textContent = (costOfCapital / 1000).toFixed(0) + 'K';
-            document.getElementById('expectedLosses').textContent = (expectedLosses / 1000).toFixed(0) + 'K';
-            document.getElementById('netProfit').textContent = (netProfit / 1000000).toFixed(2) + 'M';
-            document.getElementById('roe').textContent = roe.toFixed(1) + '%';
-            
-            // Update scale comparison
-            generateScaleComparison(loan);
+            updatePortfolio(loan);
             
             // Update charts
             updateCharts(loan);
-            updatePortfolioChart();
+        }
+        
+        function updatePortfolio(loan) {
+            const portfolioValue = loan.grossPrincipal * state.numFarmers;
+            const financierTotalRevenue = loan.financierRevenue * state.numFarmers;
+            const imfuyoTotalRevenue = loan.imfuyoTotalRevenue * state.numFarmers;
+            const costOfCapital = portfolioValue * (state.capitalCost / 100);
+            const expectedLosses = portfolioValue * (state.defaultRate / 100);
+            const financierNetProfit = financierTotalRevenue - costOfCapital - expectedLosses;
+            const imfuyoNetProfit = loan.imfuyoNetProfit * state.numFarmers;
+            
+            document.getElementById('portfolioValue').textContent = (portfolioValue / 1000000).toFixed(2) + 'M';
+            document.getElementById('financierPortfolioRevenue').textContent = (financierTotalRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('imfuyoPortfolioRevenue').textContent = (imfuyoTotalRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('expectedLosses').textContent = (expectedLosses / 1000).toFixed(0) + 'K';
+            document.getElementById('financierNetProfit').textContent = (financierNetProfit / 1000000).toFixed(2) + 'M';
+            document.getElementById('imfuyoNetProfit').textContent = (imfuyoNetProfit / 1000).toFixed(0) + 'K';
+            
+            // Update portfolio chart
+            portfolioChart.data.datasets[0].data = [financierTotalRevenue, imfuyoTotalRevenue];
+            portfolioChart.data.datasets[1].data = [costOfCapital + expectedLosses, loan.imfuyoOpsCost * state.numFarmers];
+            portfolioChart.data.datasets[2].data = [financierNetProfit, imfuyoNetProfit];
+            portfolioChart.update();
         }
         
         function updateCharts(loan) {
@@ -1517,75 +1784,6 @@
             paymentChart.data.labels = Array.from({length: state.tenure}, (_, i) => `M${i+1}`);
             paymentChart.data.datasets[0].data = Array(state.tenure).fill(loan.monthlyPayment);
             paymentChart.update();
-        }
-        
-        function updatePortfolioChart() {
-            const loan = calculateLoan();
-            const portfolioValue = loan.grossPrincipal * state.numFarmers;
-            
-            // Current model
-            const current = {
-                revenue: (loan.totalInterest + state.serviceFee + loan.deductibleAmount) * state.numFarmers,
-                capitalCost: portfolioValue * (state.capitalCost / 100),
-                losses: portfolioValue * (state.defaultRate / 100)
-            };
-            current.profit = current.revenue - current.capitalCost - current.losses;
-            
-            // Lower rate (-1%)
-            const tempRate = state.interestRate;
-            state.interestRate = tempRate - 1;
-            const loanLower = calculateLoan();
-            const lowerRate = {
-                revenue: (loanLower.totalInterest + state.serviceFee + loanLower.deductibleAmount) * state.numFarmers,
-                capitalCost: portfolioValue * (state.capitalCost / 100),
-                losses: portfolioValue * ((state.defaultRate - 2) / 100) // Assume lower defaults
-            };
-            lowerRate.profit = lowerRate.revenue - lowerRate.capitalCost - lowerRate.losses;
-            state.interestRate = tempRate;
-            
-            // Higher tenure
-            const tempTenure = state.tenure;
-            state.tenure = tempTenure + 6;
-            const loanTenure = calculateLoan();
-            const higherTenure = {
-                revenue: (loanTenure.totalInterest + state.serviceFee + loanTenure.deductibleAmount) * state.numFarmers,
-                capitalCost: (loan.grossPrincipal * state.numFarmers) * (state.capitalCost / 100) * 1.5,
-                losses: portfolioValue * ((state.defaultRate - 1) / 100)
-            };
-            higherTenure.profit = higherTenure.revenue - higherTenure.capitalCost - higherTenure.losses;
-            state.tenure = tempTenure;
-            
-            // Lower deposit
-            const tempDeposit = state.deposit;
-            state.deposit = tempDeposit - 5;
-            const loanDeposit = calculateLoan();
-            const lowerDeposit = {
-                revenue: (loanDeposit.totalInterest + state.serviceFee + loanDeposit.deductibleAmount) * state.numFarmers,
-                capitalCost: (loanDeposit.grossPrincipal * state.numFarmers) * (state.capitalCost / 100),
-                losses: (loanDeposit.grossPrincipal * state.numFarmers) * ((state.defaultRate + 2) / 100)
-            };
-            lowerDeposit.profit = lowerDeposit.revenue - lowerDeposit.capitalCost - lowerDeposit.losses;
-            state.deposit = tempDeposit;
-            
-            portfolioChart.data.datasets[0].data = [
-                current.profit,
-                lowerRate.profit,
-                higherTenure.profit,
-                lowerDeposit.profit
-            ];
-            portfolioChart.data.datasets[1].data = [
-                current.losses,
-                lowerRate.losses,
-                higherTenure.losses,
-                lowerDeposit.losses
-            ];
-            portfolioChart.data.datasets[2].data = [
-                current.capitalCost,
-                lowerRate.capitalCost,
-                higherTenure.capitalCost,
-                lowerDeposit.capitalCost
-            ];
-            portfolioChart.update();
         }
         
         function loadPersona(personaKey) {
@@ -1628,7 +1826,7 @@
                     break;
                 case 'sick':
                     newGoatIncome = originalGoatIncome * 0.5;
-                    scenarioText = 'Goat illness reduces milk income by 50%';
+                    scenarioText = 'Goat illness reduces milk income by 50% (Imfuyo vet services can help prevent this!)';
                     break;
                 case 'prices':
                     newGoatIncome = originalGoatIncome * 1.4;
@@ -1664,7 +1862,10 @@
                 numFarmers: 100,
                 defaultRate: 10,
                 capitalCost: 12,
-                currentPersona: 'jane'
+                currentPersona: 'jane',
+                feedCostPerFarmer: 1000,
+                feedMarginPercent: 30,
+                imfuyoCommissionPercent: 1
             };
             
             // Reset all sliders
@@ -1672,7 +1873,6 @@
             document.getElementById('interestRate').value = 4.5;
             document.getElementById('tenure').value = 12;
             document.getElementById('deposit').value = 10;
-            document.getElementById('serviceFee').value = 11800;
             document.getElementById('deductible').value = 4;
             document.getElementById('monthlyIncome').value = 15000;
             document.getElementById('monthlyExpenses').value = 9000;
@@ -1706,128 +1906,96 @@
             // Calculate number of loans possible with float
             const numLoans = Math.floor(floatInvestment / loan.grossPrincipal);
             
-            // Calculate revenue (interest + fees collected)
-            const interestPerLoan = loan.totalInterest;
-            const feesPerLoan = state.serviceFee + loan.deductibleAmount;
-            const revenuePerLoan = interestPerLoan + feesPerLoan;
-            const totalRevenue = revenuePerLoan * numLoans;
+            // Financier calculations
+            const financierTotalInterest = loan.totalInterest * numLoans;
+            const financierTotalFees = loan.deductibleAmount * numLoans;
+            const financierTotalRevenue = financierTotalInterest + financierTotalFees;
+            const financierReturn = ((financierTotalRevenue / floatInvestment) * 100).toFixed(1);
             
-            // Calculate costs
-            const costOfCapital = floatInvestment * (state.capitalCost / 100);
-            const expectedLosses = floatInvestment * (state.defaultRate / 100);
-            const totalCosts = costOfCapital + expectedLosses;
-            
-            // Calculate actual return
-            const netProfit = totalRevenue - totalCosts;
-            const actualReturnPercent = (netProfit / floatInvestment) * 100;
+            // Imfuyo calculations
+            const imfuyoTotalService = state.serviceFee * numLoans;
+            const imfuyoTotalCommission = loan.imfuyoCommission * numLoans;
+            const imfuyoTotalFeed = loan.imfuyoFeedMargin * numLoans;
+            const imfuyoTotalRevenue = imfuyoTotalService + imfuyoTotalCommission + imfuyoTotalFeed;
+            const imfuyoTotalCosts = loan.imfuyoOpsCost * numLoans;
+            const imfuyoNetProfit = imfuyoTotalRevenue - imfuyoTotalCosts;
+            const imfuyoMargin = ((imfuyoNetProfit / imfuyoTotalRevenue) * 100).toFixed(1);
             
             // Update display
             document.getElementById('floatResults').style.display = 'block';
-            document.getElementById('numLoans').textContent = numLoans;
-            document.getElementById('totalRevenue').textContent = (totalRevenue / 1000000).toFixed(2) + 'M';
-            document.getElementById('actualReturn').textContent = actualReturnPercent.toFixed(1) + '%';
-            document.getElementById('profitAmount').textContent = (netProfit / 1000000).toFixed(2) + 'M';
+            document.getElementById('floatNumLoans').textContent = numLoans;
+            document.getElementById('floatFinancierInterest').textContent = (financierTotalInterest / 1000000).toFixed(2) + 'M';
+            document.getElementById('floatFinancierFees').textContent = (financierTotalFees / 1000).toFixed(0) + 'K';
+            document.getElementById('floatFinancierRevenue').textContent = (financierTotalRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('floatFinancierReturn').textContent = financierReturn + '%';
+            
+            document.getElementById('floatImfuyoService').textContent = (imfuyoTotalService / 1000000).toFixed(2) + 'M';
+            document.getElementById('floatImfuyoCommission').textContent = (imfuyoTotalCommission / 1000).toFixed(0) + 'K';
+            document.getElementById('floatImfuyoFeed').textContent = (imfuyoTotalFeed / 1000).toFixed(0) + 'K';
+            document.getElementById('floatImfuyoRevenue').textContent = (imfuyoTotalRevenue / 1000000).toFixed(2) + 'M';
+            document.getElementById('floatImfuyoMargin').textContent = imfuyoMargin + '%';
             
             // Generate impact explanation
-            generateImpactExplanation(floatInvestment, numLoans, totalRevenue, actualReturnPercent, targetReturn, loan);
+            generateImpactExplanation(floatInvestment, numLoans, financierReturn, targetReturn, imfuyoMargin);
             
             // Generate recommendations
-            generateRecommendations(actualReturnPercent, targetReturn, floatInvestment, numLoans, loan);
+            generateRecommendations(financierReturn, targetReturn, floatInvestment, numLoans, loan);
         }
         
-        function generateImpactExplanation(float, numLoans, revenue, actualReturn, targetReturn, loan) {
-            const avgMonthlyPayment = loan.monthlyPayment;
-            const totalFarmersServed = numLoans;
-            const returnDiff = actualReturn - targetReturn;
+        function generateImpactExplanation(float, numLoans, financierReturn, targetReturn, imfuyoMargin) {
+            const returnDiff = financierReturn - targetReturn;
             
-            let explanation = `With your Kshs. ${(float / 1000000).toFixed(1)}M investment, you can serve ${totalFarmersServed} farmers. `;
-            explanation += `Each farmer pays Kshs. ${Math.round(avgMonthlyPayment).toLocaleString()}/month. `;
-            explanation += `Your current model generates ${actualReturn.toFixed(1)}% annual return `;
+            let explanation = `With your Kshs. ${(float / 1000000).toFixed(1)}M investment serving ${numLoans} farmers: `;
+            explanation += `<strong>Financier</strong> earns ${financierReturn}% return `;
             
             if (returnDiff >= 0) {
-                explanation += `— <strong style="color: #065F46;">EXCEEDING your ${targetReturn}% target by ${returnDiff.toFixed(1)} percentage points! 🎉</strong>`;
+                explanation += `(✅ ${returnDiff.toFixed(1)}pp above ${targetReturn}% target). `;
             } else {
-                explanation += `— <strong style="color: #92400E;">BELOW your ${targetReturn}% target by ${Math.abs(returnDiff).toFixed(1)} percentage points.</strong>`;
+                explanation += `(⚠️ ${Math.abs(returnDiff).toFixed(1)}pp below ${targetReturn}% target). `;
             }
+            
+            explanation += `<strong>Imfuyo</strong> achieves ${imfuyoMargin}% profit margin through service delivery, commissions, and feed sales. `;
+            explanation += `Both partners scale together - more farmers = more impact!`;
             
             document.getElementById('currentImpact').innerHTML = explanation;
         }
         
-        function generateRecommendations(actualReturn, targetReturn, float, numLoans, loan) {
-            const returnGap = targetReturn - actualReturn;
+        function generateRecommendations(financierReturn, targetReturn, float, numLoans, loan) {
+            const returnGap = targetReturn - financierReturn;
             const recommendations = [];
             
             if (returnGap > 0) {
-                // Need to increase return
+                // Need to increase financier return
                 recommendations.push({
                     icon: '📈',
-                    text: `<strong>Increase interest rate to ${(state.interestRate + 0.5).toFixed(1)}%</strong> — This would add ~${(float * 0.05 / 1000000).toFixed(2)}M in additional revenue (${(5).toFixed(1)}% more return)`
-                });
-                
-                recommendations.push({
-                    icon: '💰',
-                    text: `<strong>Increase service fee to Kshs. ${(state.serviceFee + 2000).toLocaleString()}</strong> — This adds Kshs. ${(numLoans * 2000).toLocaleString()} in upfront revenue`
-                });
-                
-                recommendations.push({
-                    icon: '📊',
-                    text: `<strong>Reduce expected defaults to ${Math.max(5, state.defaultRate - 2)}%</strong> — Better screening saves Kshs. ${((float * 0.02) / 1000).toFixed(0)}K, adding ${(2).toFixed(1)}% to returns`
+                    text: `<strong>Increase interest rate to ${(state.interestRate + 0.5).toFixed(1)}%</strong> — Adds revenue for financier while maintaining farmer affordability`
                 });
                 
                 recommendations.push({
                     icon: '⏱️',
-                    text: `<strong>Shorten tenure to ${Math.max(6, state.tenure - 3)} months</strong> — Faster capital turnover lets you do 2 cycles/year, potentially doubling returns`
-                });
-                
-            } else if (returnGap < 0 && actualReturn > targetReturn * 1.2) {
-                // Return is much higher than needed - can improve farmer experience
-                recommendations.push({
-                    icon: '💚',
-                    text: `<strong>Reduce interest rate to ${Math.max(2, state.interestRate - 1).toFixed(1)}%</strong> — You're over-earning! Lower rates to ${Math.max(2, state.interestRate - 1).toFixed(1)}% would still give ${(actualReturn - 8).toFixed(1)}% return while making loans more affordable`
+                    text: `<strong>Shorten tenure to ${Math.max(6, state.tenure - 3)} months</strong> — Faster capital turnover = more loan cycles per year = higher annual returns`
                 });
                 
                 recommendations.push({
                     icon: '🎯',
-                    text: `<strong>Increase loan tenure to ${state.tenure + 6} months</strong> — Monthly payments drop from Kshs. ${Math.round(loan.monthlyPayment).toLocaleString()} to ~Kshs. ${Math.round(loan.monthlyPayment * 0.7).toLocaleString()}, improving farmer cashflow`
+                    text: `<strong>Scale to ${Math.round(numLoans * 1.5)} farmers</strong> — Imfuyo's infrastructure can support more, spreading fixed costs and improving both partners' economics`
+                });
+                
+            } else {
+                // Return is good - optimize for sustainability
+                recommendations.push({
+                    icon: '✅',
+                    text: `<strong>Partnership is profitable!</strong> Financier at ${financierReturn.toFixed(1)}% return, Imfuyo earning service fees + commission. Focus on scaling and reducing defaults through strong farmer support.`
+                });
+                
+                recommendations.push({
+                    icon: '🌱',
+                    text: `<strong>Invest in farmer success</strong> — Leverage Imfuyo's training and vet services to boost goat productivity. Healthier goats = better milk yields = lower default risk = sustainable growth.`
                 });
                 
                 recommendations.push({
                     icon: '🤝',
-                    text: `<strong>Reduce farmer deposit to ${Math.max(0, state.deposit - 5)}%</strong> — Lower barrier to entry lets you reach more farmers in need while staying profitable`
-                });
-                
-                recommendations.push({
-                    icon: '📈',
-                    text: `<strong>Scale up operations</strong> — Your model is highly profitable. Consider increasing float to serve ${Math.round(numLoans * 1.5)} farmers and triple your impact`
-                });
-                
-            } else {
-                // Just right - optimize for sustainability
-                recommendations.push({
-                    icon: '✅',
-                    text: `<strong>Perfect balance achieved!</strong> — Your ${actualReturn.toFixed(1)}% return meets your ${targetReturn}% target. Focus on:
-                        <br>• Maintaining default rates below ${state.defaultRate}%
-                        <br>• Building farmer loyalty through fair terms
-                        <br>• Gradual scaling with proven model`
-                });
-                
-                recommendations.push({
-                    icon: '⚖️',
-                    text: `<strong>Fine-tune for sustainability</strong> — Consider slight rate reduction (to ${(state.interestRate - 0.5).toFixed(1)}%) with improved collections to maintain ${(actualReturn - 3).toFixed(1)}% returns while improving farmer outcomes`
-                });
-                
-                recommendations.push({
-                    icon: '🎓',
-                    text: `<strong>Add value-added services</strong> — Use your strong position to offer training, vet services, or input financing to reduce defaults and increase farmer success`
-                });
-            }
-            
-            // Add impact-based insights
-            const dtIRatio = (loan.monthlyPayment / (state.monthlyIncome + state.goatIncome)) * 100;
-            if (dtIRatio > 40) {
-                recommendations.push({
-                    icon: '⚠️',
-                    text: `<strong>Warning: High farmer burden</strong> — Current DTI ratio is ${dtIRatio.toFixed(0)}%. Farmers struggle when paying >${40}% of income. Consider reducing rate or extending tenure to prevent defaults`
+                    text: `<strong>Deepen partnership</strong> — Explore bundling additional services (feed financing, breeding, market access) through Mbuzi Plus. More farmer value = stronger loyalty = portfolio growth.`
                 });
             }
             
